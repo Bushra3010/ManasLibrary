@@ -1,0 +1,14 @@
+{
+  "$schema": "https://railway.app/railway.schema.json",
+  "build": {
+    "builder": "NIXPACKS",
+    "buildCommand": "npm ci --include=dev && npm run build -w @manas/shared && npm run build -w @manas/api"
+  },
+  "deploy": {
+    "startCommand": "node apps/api/dist/database/migrate.js up && node apps/api/dist/index.js",
+    "healthcheckPath": "/health",
+    "healthcheckTimeout": 30,
+    "restartPolicyType": "ON_FAILURE",
+    "restartPolicyMaxRetries": 5
+  }
+}
