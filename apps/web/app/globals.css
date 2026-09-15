@@ -1,0 +1,224 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  /* Indigo-on-light palette.
+     `brand` is the indigo of the greeting banner and primary buttons, so
+     `brand-subtle` is the pale indigo behind the active nav pill. The
+     semantic colours (positive / warning / danger) stay independent of the
+     brand so status badges and charts keep their meaning. */
+  :root {
+    --surface: 255 255 255;
+    --surface-raised: 255 255 255;
+    --surface-sunken: 246 247 250;
+    --border: 232 235 241;
+    --content: 26 31 54;
+    --content-muted: 107 114 128;
+    --content-subtle: 148 157 172;
+
+    --brand: 46 61 156;
+    --brand-hover: 35 47 124;
+    --brand-subtle: 238 240 253;
+
+    --positive: 22 138 70;
+    --positive-subtle: 231 247 238;
+    --warning: 194 120 20;
+    --warning-subtle: 253 240 228;
+    --danger: 213 48 53;
+    --danger-subtle: 253 236 236;
+    --info: 37 99 235;
+    --info-subtle: 231 240 253;
+
+    --font-sans: var(--font-jakarta), ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --font-display: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
+  }
+
+  .dark {
+    --surface: 21 25 38;
+    --surface-raised: 28 33 48;
+    --surface-sunken: 15 18 28;
+    --border: 44 51 70;
+    --content: 233 236 243;
+    --content-muted: 154 163 182;
+    --content-subtle: 116 125 145;
+
+    --brand: 129 145 248;
+    --brand-hover: 158 170 250;
+    --brand-subtle: 30 37 72;
+
+    --positive: 74 190 118;
+    --positive-subtle: 18 44 30;
+    --warning: 226 168 74;
+    --warning-subtle: 52 40 20;
+    --danger: 248 113 113;
+    --danger-subtle: 56 26 26;
+    --info: 116 165 250;
+    --info-subtle: 22 36 60;
+  }
+
+  /* ------------------------------------------------------------------
+     Accents.
+
+     Each metric on a dashboard carries its own colour identity, so a
+     reader learns "green is money in, red is money overdue" and can scan
+     by hue. A class sets three variables and every component that uses
+     them — tinted surface, icon badge, emphasised value — follows,
+     including in dark mode. Adding a seventh accent means adding one
+     block here and nothing else.
+     ------------------------------------------------------------------ */
+  .accent-blue   { --accent-fg: 37 99 235;  --accent-soft: 239 245 255; --accent-chip: 219 232 254; }
+  .accent-green  { --accent-fg: 15 138 88;  --accent-soft: 236 251 243; --accent-chip: 209 245 227; }
+  .accent-amber  { --accent-fg: 180 116 14; --accent-soft: 255 247 232; --accent-chip: 253 236 200; }
+  .accent-purple { --accent-fg: 124 58 237; --accent-soft: 246 241 255; --accent-chip: 232 222 255; }
+  .accent-rose   { --accent-fg: 211 58 72;  --accent-soft: 255 241 242; --accent-chip: 255 221 224; }
+  .accent-teal   { --accent-fg: 13 140 140; --accent-soft: 235 248 248; --accent-chip: 205 239 239; }
+
+  .dark .accent-blue   { --accent-fg: 138 172 255; --accent-soft: 25 33 56;  --accent-chip: 34 47 82; }
+  .dark .accent-green  { --accent-fg: 109 205 156; --accent-soft: 18 38 30;  --accent-chip: 24 55 42; }
+  .dark .accent-amber  { --accent-fg: 232 179 90;  --accent-soft: 42 34 20;  --accent-chip: 60 47 26; }
+  .dark .accent-purple { --accent-fg: 182 148 255; --accent-soft: 33 27 52;  --accent-chip: 47 37 76; }
+  .dark .accent-rose   { --accent-fg: 248 145 155; --accent-soft: 46 26 30;  --accent-chip: 66 34 39; }
+  .dark .accent-teal   { --accent-fg: 106 206 206; --accent-soft: 17 40 42;  --accent-chip: 23 57 59; }
+
+  * {
+    border-color: rgb(var(--border));
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: rgb(var(--surface-sunken));
+    color: rgb(var(--content));
+    font-family: var(--font-sans);
+    font-feature-settings: 'cv02', 'cv03', 'cv04';
+  }
+
+  /* A visible focus ring is a requirement, not a nicety — the seat grid and
+     data tables are navigated by keyboard in day-to-day use. */
+  :focus-visible {
+    outline: 2px solid rgb(var(--brand));
+    outline-offset: 2px;
+  }
+
+  ::selection {
+    background-color: rgb(var(--brand) / 0.2);
+  }
+}
+
+@layer components {
+  .wordmark {
+    font-family: var(--font-display);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+
+  .card {
+    @apply rounded-card border border-border bg-surface-raised shadow-card;
+  }
+
+  .input-base {
+    @apply w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm text-content
+           placeholder:text-content-subtle
+           focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/25
+           disabled:cursor-not-allowed disabled:bg-surface-sunken disabled:text-content-subtle;
+  }
+
+  .table-cell {
+    @apply px-4 py-3 text-sm;
+  }
+}
+
+@layer utilities {
+  .scrollbar-thin {
+    scrollbar-width: thin;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .animate-fade-in {
+      animation: none;
+    }
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Print.
+
+   A printed invoice is a document, not a screenshot of an admin console, so
+   the app chrome is removed, colours are forced to something that survives a
+   monochrome printer, and the page is allowed to use the full sheet.
+   Anything the reader cannot act on from paper is marked `.no-print`.
+   -------------------------------------------------------------------------- */
+@media print {
+  .no-print,
+  .no-print * {
+    display: none !important;
+  }
+
+  html,
+  body {
+    background: #fff !important;
+    color: #000 !important;
+  }
+
+  /* Undo the app shell's sidebar offset and viewport constraints so the
+     document starts at the top-left of the sheet. */
+  .print-root {
+    position: static !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    max-width: none !important;
+    width: 100% !important;
+  }
+
+  /* Backgrounds are off by default in most browsers; ask for them so table
+     headers and the totals band stay legible. */
+  .print-keep-color {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Never split a row or a totals block across two sheets. */
+  tr,
+  .print-avoid-break {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  a[href]::after {
+    content: '';
+  }
+
+  /* An invoice must fit one sheet.
+
+     The document is laid out at screen width, which is wider than A4's
+     printable area, so without this the browser either clips it or silently
+     scales it and the height maths stops being predictable. Pinning the sheet
+     to the usable width (210mm − 28mm of margins) and trimming the type makes
+     the printed size deterministic. */
+  .invoice-sheet {
+    width: 182mm !important;
+    max-width: 182mm !important;
+    font-size: 10.5px !important;
+    line-height: 1.42 !important;
+  }
+
+  /* An invoice long enough to need a second sheet should still read as a
+     document: repeat the column headers rather than leaving orphaned rows
+     under nothing. Truncating line items to force one page would hide
+     money, which is never the right trade. */
+  thead {
+    display: table-header-group;
+  }
+
+  tfoot {
+    display: table-footer-group;
+  }
+}
+
+@page {
+  size: A4;
+  margin: 14mm;
+}
