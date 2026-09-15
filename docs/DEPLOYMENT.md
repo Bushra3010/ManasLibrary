@@ -5,10 +5,27 @@ Two services from one repository.
 ## Service 1 — API
 
 - **Root directory:** repository root
-- **Config:** `apps/api/railway.json`
-- Build: `npm ci && npm run build -w @manas/shared && npm run build -w @manas/api`
-- Start: `npm run migrate -w @manas/api && npm run start -w @manas/api`
+- **Builder:** Railpack (Railway's current default)
 - Health check: `/health`
+
+Railway builds this service with Railpack, which does **not** read
+`apps/api/railway.json` — nor a `railway.json` at the repository root. Set the
+build and start commands as service variables instead:
+
+```
+RAILPACK_INSTALL_CMD=npm ci --include=dev
+RAILPACK_BUILD_CMD=npm run build -w @manas/shared && npm run build -w @manas/api
+RAILPACK_START_CMD=node apps/api/dist/database/migrate.js up && node apps/api/dist/index.js
+```
+
+Two details matter here:
+
+- `--include=dev` on the install. `NODE_ENV=production` makes `npm ci` skip
+  devDependencies, and TypeScript itself is a devDependency — without the flag
+  the build has no compiler.
+- The start command runs the **compiled** `dist` output rather than `tsx`, so
+  the runtime does not depend on devDependencies surviving into the final
+  image.
 
 Environment:
 
@@ -28,6 +45,10 @@ BIOMETRIC_PROVIDER=none
 
 Use the **pooled** (pgBouncer) connection string in production; Supabase limits
 direct connections.
+
+Percent-encode any reserved character in the database password when building
+`DATABASE_URL`. A literal `@` in the password is read as the host separator and
+the connection fails — `Pa@ss` must be written `Pa%40ss`.
 
 ## Service 2 — Web
 
